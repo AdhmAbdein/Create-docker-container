@@ -1,0 +1,32 @@
+
+---
+  - name: install docker and start it and create 2 container(nginx-mysql)
+    hosts: all
+    become: yes
+    tasks:
+      - name: Update system packages
+        command: sudo dnf install -y yum-utils
+  
+      - name: Update system packages
+        command: sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  
+      - name: Update system packages
+        command: sudo dnf install -y docker-ce docker-ce-cli containerd.io
+  
+      - name: start docker dervice
+        systemd:
+          name: docker
+          state: started
+          enabled: yes
+          #enabled: yes ensures the service will start on boot
+  
+      - name: create 2 container (nginx - mysql)
+        docker_container:
+          name: "{{ item.name }}"
+          image: "{{ item.image }}"
+          state: started
+        loop:
+          - { name: "nginx_cont", image: "nginx" }
+          - { name: "mysql", image: "mysql"}
+  ~
+  
